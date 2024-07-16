@@ -1,13 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* src/index.css */
+.canvas {
+    background-size: 20px 20px;
+    background-image: linear-gradient(to right, #e0e0e0 1px, transparent 1px),
+                      linear-gradient(to bottom, #e0e0e0 1px, transparent 1px);
+  }
+ /* src/index.css */
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: Arial, sans-serif;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.navbar {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  height: 64px; /* Adjust the height as needed */
+}
+
+.main-content {
+  padding-top: 64px; /* Same as the height of the navbar */
+}
+
+.properties-panel {
+  width: 300px;
+  overflow-y: auto;
+}
+
+.hierarchy-panel {
+  width: 300px;
+  overflow-y: auto;
+}
+
+.canvas {
+  background-size: 10px 10px;
+  background-image: linear-gradient(to right, #e0e0e0 1px, transparent 1px),
+                    linear-gradient(to bottom, #e0e0e0 1px, transparent 1px);
+}
+
+.btn {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
 }
