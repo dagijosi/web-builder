@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { updateElement } from "../features/elements/elementsSlice";
+import { deleteElement, updateElement } from "../features/elements/elementsSlice";
 import PropertyInput from "./PropertyInput";
 import DropdownInput from "./DropdownInput";
 
@@ -222,6 +222,12 @@ const PropertiesPanel = () => {
     }
   };
 
+  const handleDelete = () => {
+    if (selectedElement) {
+      dispatch(deleteElement(selectedElement.id));
+    }
+  };
+
   if (!selectedElement) return null;
 
   return (
@@ -254,6 +260,9 @@ const PropertiesPanel = () => {
             renderFieldProperties(selectedElement, handleChange)}
           {selectedElement.type === "container" &&
             renderContainerProperties(selectedElement, handleChange)}
+            <button onClick={handleDelete} className="btn mt-4">
+            Delete Element
+          </button>
         </>
       )}
     </div>

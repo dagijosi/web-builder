@@ -1,21 +1,36 @@
 export const exportProject = (elements) => {
-  const viewportWidth = window.innerWidth;
-  const viewportHeight = window.innerHeight;
+  const laptopScreenWidth = 1366;
+  const laptopScreenHeight = 768;
 
-  // Calculate percentages based on viewport size
+  // Calculate percentages based on laptop screen size
+  const calculatePercentage = (value, total) => (value / total) * 100;
 
-  const htmlContent = elements
-    .map((el) => {
-      const leftPercentage = (el.x / viewportWidth) * 100;
-      const topPercentage = (el.y / viewportHeight) * 100;
-      const widthPercentage = (el.width / viewportWidth) * 100;
-      const heightPercentage = (el.height / viewportHeight) * 100;
-      const style = `
+  // Find the container element
+  const containerElement = elements.find(el => el.type === 'container');
+
+  if (!containerElement) {
+    console.error('No container element found.');
+    return;
+  }
+
+  // Generate container style
+  const containerStyle = `
+    position: absolute;
+    left: ${calculatePercentage(containerElement.x, laptopScreenWidth)}%;
+    top: ${calculatePercentage(containerElement.y, laptopScreenHeight)}%;
+    width: ${calculatePercentage(containerElement.width, laptopScreenWidth)}%;
+    height: ${calculatePercentage(containerElement.height, laptopScreenHeight)}%;
+    ${containerElement.backgroundColor ? `background-color: ${containerElement.backgroundColor};` : ""}
+  `;
+
+  // Generate content for each element inside the container
+  const childElements = elements.filter(el => el.type !== 'container').map(el => {
+    const style = `
       position: absolute;
-      left: ${leftPercentage}%;
-      top: ${topPercentage}%;
-      width: ${widthPercentage}%;
-      height: ${heightPercentage}%;
+      left: ${calculatePercentage(el.x - containerElement.x, laptopScreenWidth)}%;
+      top: ${calculatePercentage(el.y - containerElement.y, laptopScreenHeight)}%;
+      width: ${calculatePercentage(el.width, laptopScreenWidth)}%;
+      height: ${calculatePercentage(el.height, laptopScreenHeight)}%;
       ${el.paddingTop ? `padding-top: ${el.paddingTop}rem;` : ""}
       ${el.paddingRight ? `padding-right: ${el.paddingRight}rem;` : ""}
       ${el.paddingBottom ? `padding-bottom: ${el.paddingBottom}rem;` : ""}
@@ -31,22 +46,15 @@ export const exportProject = (elements) => {
       ${el.textAlign ? `text-align: ${el.textAlign};` : ""}
     `;
 
-      let content = el.content || "";
-      if (el.type === "image" && el.imageSrc) {
-        content = `<img src="${
-          el.imageSrc
-        }" style="width: 100%; height: 100%; object-fit: ${
-          el.objectFit || "fill"
-        };" />`;
-      } else if (el.type === "field") {
-        content = `<input type="text" value="${el.value || ""}" placeholder="${
-          el.placeholder || ""
-        }" style="width: 100%; height: 100%;" />`;
-      }
+    let content = el.content || "";
+    if (el.type === "image" && el.imageSrc) {
+      content = `<img src="${el.imageSrc}" style="width: 100%; height: 100%; object-fit: ${el.objectFit || "fill"};" />`;
+    } else if (el.type === "field") {
+      content = `<input type="text" value="${el.value || ""}" placeholder="${el.placeholder || ""}" style="width: 100%; height: 100%;" />`;
+    }
 
-      return `<div style="${style}">${content}</div>`;
-    })
-    .join("");
+    return `<div style="${style}">${content}</div>`;
+  }).join("");
 
   const html = `
     <!DOCTYPE html>
@@ -62,7 +70,10 @@ export const exportProject = (elements) => {
     </head>
     <body>
       <div class="canvas">
-        ${htmlContent}
+        <div style="${containerStyle}">
+          ${containerElement.content || "Container"}
+          ${childElements}
+        </div>
       </div>
     </body>
     </html>

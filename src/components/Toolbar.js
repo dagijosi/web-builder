@@ -45,11 +45,10 @@ const Toolbar = () => {
       color: '#fff',
     },
     container: {
-      content: 'Container',
-      x: 50,
-      y: 50,
-      width: 200,
-      height: 200,
+      x: 0,
+      y: 0,
+      width: 1366,
+      height: 768,
       backgroundColor: '#f0f0f0',
     },
   };

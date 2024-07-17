@@ -34,7 +34,7 @@ body {
 }
 
 .canvas {
-  background-size: 10px 10px;
+  background-size: 5px 5px;
   background-image: linear-gradient(to right, #e0e0e0 1px, transparent 1px),
                     linear-gradient(to bottom, #e0e0e0 1px, transparent 1px);
 }
