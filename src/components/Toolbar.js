@@ -12,6 +12,7 @@ const Toolbar = () => {
   const elementDefaults = {
     text: {
       content: 'Text',
+      text: "Text",
       x: 10,
       y: 10,
       width: 100,
@@ -21,6 +22,7 @@ const Toolbar = () => {
     },
     image: {
       content: 'Image',
+      text: "Image",
       x: 20,
       y: 20,
       width: 100,
@@ -29,6 +31,7 @@ const Toolbar = () => {
     },
     field: {
       content: 'Field',
+      text: "Field",
       x: 30,
       y: 30,
       width: 100,
@@ -37,6 +40,7 @@ const Toolbar = () => {
     },
     button: {
       content: 'Button',
+      text: "Button",
       x: 40,
       y: 40,
       width: 100,
@@ -45,6 +49,7 @@ const Toolbar = () => {
       color: '#fff',
     },
     container: {
+      text: "Container",
       x: 0,
       y: 0,
       width: 1366,
@@ -87,7 +92,7 @@ const Toolbar = () => {
       <div className="flex space-x-2">
         {Object.keys(elementDefaults).map((type) => (
           <button key={type} onClick={() => addNewElement(type)} className="btn">
-            Add {elementDefaults[type].content}
+            Add {elementDefaults[type].text}
           </button>
         ))}
       </div>

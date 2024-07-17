@@ -71,7 +71,6 @@ export const exportProject = (elements) => {
     <body>
       <div class="canvas">
         <div style="${containerStyle}">
-          ${containerElement.content || "Container"}
           ${childElements}
         </div>
       </div>
