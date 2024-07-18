@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { deleteElement, updateElement } from "../features/elements/elementsSlice";
 import PropertyInput from "./PropertyInput";
 import DropdownInput from "./DropdownInput";
+import { AiOutlineDelete, AiOutlineClose, AiOutlineSetting } from "react-icons/ai";
 
 const renderCommonProperties = (selectedElement, handleChange) => (
   <>
@@ -38,7 +39,7 @@ const renderCommonProperties = (selectedElement, handleChange) => (
       type="number"
       unit="px"
     />
-    <div className="space-x-2">
+    <div className="space-y-1">
       {["Top", "Right", "Bottom", "Left"].map((pos) => (
         <PropertyInput
           key={pos}
@@ -51,7 +52,7 @@ const renderCommonProperties = (selectedElement, handleChange) => (
         />
       ))}
     </div>
-    <div className="space-x-2">
+    <div className="space-y-1">
       {["Top", "Right", "Bottom", "Left"].map((pos) => (
         <PropertyInput
           key={pos}
@@ -122,7 +123,7 @@ const renderButtonProperties = (selectedElement, handleChange) => (
       value={selectedElement.fontSize || ""}
       onChange={handleChange}
       type="number"
-      unit="px"
+      unit="rem"
     />
     <PropertyInput
       label="Font Family"
@@ -143,6 +144,29 @@ const renderButtonProperties = (selectedElement, handleChange) => (
       value={selectedElement.backgroundColor || ""}
       onChange={handleChange}
       type="color"
+    />
+    <PropertyInput
+      label="Border Color"
+      name="borderColor"
+      value={selectedElement.borderColor || ""}
+      onChange={handleChange}
+      type="color"
+    />
+    <PropertyInput
+      label="Border Width"
+      name="borderWidth"
+      value={selectedElement.borderWidth || ""}
+      onChange={handleChange}
+      type="number"
+      unit="rem"
+    />
+    <PropertyInput
+      label="Border Radius"
+      name="borderRadius"
+      value={selectedElement.borderRadius || ""}
+      onChange={handleChange}
+      type="number"
+      unit="rem"
     />
   </>
 );
@@ -182,6 +206,7 @@ const renderFieldProperties = (selectedElement, handleChange) => (
     />
   </>
 );
+
 const renderContainerProperties = (selectedElement, handleChange) => (
   <>
     <PropertyInput
@@ -193,6 +218,7 @@ const renderContainerProperties = (selectedElement, handleChange) => (
     />
   </>
 );
+
 const PropertiesPanel = () => {
   const [isOpen, setIsOpen] = useState(true);
   const selectedElement = useSelector((state) =>
@@ -234,15 +260,18 @@ const PropertiesPanel = () => {
     <div
       className={`${
         isOpen
-          ? "properties-panel fixed top-16 right-0 bg-gray-200 transition-transform translate-x-0 h-[650px] p-4"
-          : "w-fit absolute top-3 right-48 z-10 h-fit"
+          ? "properties-panel fixed top-16 right-0 bg-white shadow-lg transition-transform translate-x-0 h-[650px] p-4 rounded-lg overflow-y-auto"
+          : "w-fit fixed top-3 right-3 z-10 h-fit"
       }`}
     >
-      <button onClick={() => setIsOpen(!isOpen)} className="btn mb-4">
-        {isOpen ? "Close" : "Open"} PropertiesPanel
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center justify-center bg-blue-500 text-white rounded-full p-2 mb-4 hover:bg-blue-600 focus:outline-none"
+      >
+        {isOpen ? <AiOutlineClose size={14} /> : <AiOutlineSetting size={14} />}
       </button>
       {isOpen && (
-        <>
+        <div className="space-y-2">
           <PropertyInput
             label="Content"
             name="content"
@@ -260,10 +289,13 @@ const PropertiesPanel = () => {
             renderFieldProperties(selectedElement, handleChange)}
           {selectedElement.type === "container" &&
             renderContainerProperties(selectedElement, handleChange)}
-            <button onClick={handleDelete} className="btn mt-4">
+          <button
+            onClick={handleDelete}
+            className="w-full bg-red-500 text-white rounded px-4 py-1.5 hover:bg-red-600 focus:outline-none text-sm"
+          >
             Delete Element
           </button>
-        </>
+        </div>
       )}
     </div>
   );

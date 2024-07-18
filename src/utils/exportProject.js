@@ -44,45 +44,50 @@ export const exportProject = (elements) => {
       ${el.textColor ? `color: ${el.textColor};` : ""}
       ${el.backgroundColor ? `background-color: ${el.backgroundColor};` : ""}
       ${el.textAlign ? `text-align: ${el.textAlign};` : ""}
+      ${el.cursor ? `cursor: ${el.cursor};` : ""}
+      ${el.objectFit ? `object-fit: ${el.objectFit};` : ""}
+      ${el.borderRadius ? `border-radius: ${el.borderRadius}rem;` : ""}
+      ${el.borderColor ? `border-color: ${el.borderColor};` : ""}
+      ${el.borderWidth ? `border-width: ${el.borderWidth}rem;` : ""}
+      ${el.alignItems ? `align-items: ${el.alignItems};` : ""}
+      ${el.justifyContent ? `justify-content: ${el.justifyContent};` : ""}
+      ${el.display ? `display: ${el.display};` : ""}
     `;
 
-    let content = el.content || "";
-    if (el.type === "image" && el.imageSrc) {
-      content = `<img src="${el.imageSrc}" style="width: 100%; height: 100%; object-fit: ${el.objectFit || "fill"};" />`;
-    } else if (el.type === "field") {
-      content = `<input type="text" value="${el.value || ""}" placeholder="${el.placeholder || ""}" style="width: 100%; height: 100%;" />`;
+    switch (el.type) {
+      case "text":
+        return `<p style="${style}">${el.content}</p>`;
+      case "button":
+        return `<button style="${style}">${el.content}</button>`;
+      case "field":
+        return `<input type="text" value="${el.value}" placeholder="${el.placeholder}" style="${style}"/>`;
+      case "image":
+        return `<img src="${el.imageSrc}" alt="${el.content}" style="${style}"/>`;
+      default:
+        return '';
     }
+  });
 
-    return `<div style="${style}">${content}</div>`;
-  }).join("");
-
-  const html = `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Exported Project</title>
-      <style>
-        body { margin: 0; }
-        .canvas { position: relative; width: 100vw; height: 100vh; }
-      </style>
-    </head>
-    <body>
-      <div class="canvas">
+  const htmlContent = `
+    <html>
+      <head>
+        <style>
+          * { box-sizing: border-box; }
+        </style>
+      </head>
+      <body>
         <div style="${containerStyle}">
-          ${childElements}
+          ${childElements.join("\n")}
         </div>
-      </div>
-    </body>
+      </body>
     </html>
   `;
 
-  const blob = new Blob([html], { type: "text/html" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "project.html";
-  a.click();
-  URL.revokeObjectURL(url);
+  const blob = new Blob([htmlContent], { type: "text/html" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "project.html";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 };

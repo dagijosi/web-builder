@@ -28,11 +28,6 @@ body {
   overflow-y: auto;
 }
 
-.hierarchy-panel {
-  width: 300px;
-  overflow-y: auto;
-}
-
 .canvas {
   background-size: 5px 5px;
   background-image: linear-gradient(to right, #e0e0e0 1px, transparent 1px),

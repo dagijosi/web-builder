@@ -6,12 +6,12 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
 import { store } from './store';
-import { loadProject } from './utils/storage';
-import { addElement } from './features/elements/elementsSlice';
+import { loadProjectFromStorage } from './utils/storage';
+import { loadProject, addElement } from './features/elements/elementsSlice';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
-const project = loadProject();
+const project = loadProjectFromStorage();
 project.forEach(element => store.dispatch(addElement(element)));
 
 root.render(
