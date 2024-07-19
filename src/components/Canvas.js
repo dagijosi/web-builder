@@ -1,3 +1,4 @@
+// src/components/Canvas.js
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Rnd } from "react-rnd";
@@ -117,6 +118,7 @@ console.log(zoom,zoomLevel)
             borderRadius: `${element.borderRadius}rem`,
             borderColor: element.borderColor,
             borderWidth: `${element.borderWidth}rem`,
+            boxSizing: 'border-box', // Add this line to include the border in element dimensions
           };
 
           return (
@@ -128,9 +130,11 @@ console.log(zoom,zoomLevel)
               onResizeStop={(e, direction, ref, delta, position) =>
                 handleResizeStop(element.id, e, direction, ref, delta, position)
               }
-              className="absolute border"
+             
               onClick={() => dispatch(selectElement(element.id))}
-              
+              style={{ border: "1px solid transparent" }}
+              onMouseOver={(e) => e.currentTarget.style.border = "1px solid red"}
+              onMouseOut={(e) => e.currentTarget.style.border = "1px solid transparent"}
             >
               {element.type === "text" && <p style={style}>{element.content}</p>}
               {element.type === "button" && <button style={style}>{element.content}</button>}

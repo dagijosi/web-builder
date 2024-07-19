@@ -168,6 +168,13 @@ const renderButtonProperties = (selectedElement, handleChange) => (
       type="number"
       unit="rem"
     />
+    <DropdownInput
+    label="Cursor"
+    name="cursor"
+    value={selectedElement.cursor || ""}
+    onChange={handleChange}
+    displayOptions={["auto", "default", "pointer", "move", "not-allowed"]}
+    />
   </>
 );
 

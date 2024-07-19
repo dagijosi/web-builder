@@ -1,3 +1,4 @@
+// src/components/HierarchyPanel.js
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
