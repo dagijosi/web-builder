@@ -218,6 +218,17 @@ const renderContainerProperties = (selectedElement, handleChange) => (
     />
   </>
 );
+const renderGroupProperties = (selectedElement, handleChange) => (
+  <>
+    <PropertyInput
+      label="Background Color"
+      name="backgroundColor"
+      value={selectedElement.backgroundColor || ""}
+      onChange={handleChange}
+      type="color"
+    />
+  </>
+);
 
 const PropertiesPanel = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -289,6 +300,8 @@ const PropertiesPanel = () => {
             renderFieldProperties(selectedElement, handleChange)}
           {selectedElement.type === "container" &&
             renderContainerProperties(selectedElement, handleChange)}
+          {selectedElement.type === "group" &&
+           renderGroupProperties(selectedElement, handleChange)}
           <button
             onClick={handleDelete}
             className="w-full bg-red-500 text-white rounded px-4 py-1.5 hover:bg-red-600 focus:outline-none text-sm"

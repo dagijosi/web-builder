@@ -1,4 +1,4 @@
-export const exportProject = (elements) => {
+export const exportProject = (elements,zoomLevel) => {
   const laptopScreenWidth = 1366;
   const laptopScreenHeight = 768;
 
@@ -63,6 +63,8 @@ export const exportProject = (elements) => {
         return `<input type="text" value="${el.value}" placeholder="${el.placeholder}" style="${style}"/>`;
       case "image":
         return `<img src="${el.imageSrc}" alt="${el.content}" style="${style}"/>`;
+      case "group":
+        return `<div style="${style}"></div>`;
       default:
         return '';
     }

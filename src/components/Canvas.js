@@ -5,12 +5,14 @@ import {
   updateElement,
   selectElement,
   deleteElement,
+  updateZoomLevel,
 } from "../features/elements/elementsSlice";
 import { FiZoomIn, FiZoomOut, FiRotateCcw, FiTrash2 } from "react-icons/fi"; // Updated icon for reset zoom
 
 const Canvas = () => {
   const elements = useSelector((state) => state.elements.elements);
   const selectedElementId = useSelector((state) => state.elements.selectedElementId);
+  const zoomLevel = useSelector((state) => state.elements.zoomlevel);
   const dispatch = useDispatch();
   const [zoom, setZoom] = useState(1);
   const gridSize = 1; // Reduced grid size
@@ -33,14 +35,19 @@ const Canvas = () => {
 
   const handleZoomIn = () => {
     setZoom((zoom) => Math.min(zoom + 0.1, 3)); // Max zoom level of 3
+    const zoomlevel=  zoom + 0.1
+    dispatch(updateZoomLevel(zoomlevel))
   };
 
   const handleZoomOut = () => {
     setZoom((zoom) => Math.max(zoom - 0.1, 0.5)); // Min zoom level of 0.5
+    const zoomlevel= zoom - 0.1
+    dispatch(updateZoomLevel(zoomlevel))
   };
 
   const handleResetZoom = () => {
     setZoom(1); // Reset zoom level to 1x
+    dispatch(updateZoomLevel(1))
   };
 
   const handleDelete = () => {
@@ -48,7 +55,7 @@ const Canvas = () => {
       dispatch(deleteElement(selectedElementId));
     }
   };
-
+console.log(zoom,zoomLevel)
   return (
     <div className="canvas bg-gray-100 relative w-full h-full ml-64 mt-16">
             {/* Zoom Controls */}
@@ -87,8 +94,8 @@ const Canvas = () => {
       <div style={{ transform: `scale(${zoom})`, transformOrigin: 'top left' }} className="relative">
         {elements.map((element) => {
           const style = {
-            width: element.width,
-            height: element.height,
+            width: `${element.width}px`,
+            height: `${element.height}px`,
             fontSize: `${element.fontSize}rem`,
             fontFamily: element.fontFamily,
             color: element.textColor,
@@ -110,7 +117,6 @@ const Canvas = () => {
             borderRadius: `${element.borderRadius}rem`,
             borderColor: element.borderColor,
             borderWidth: `${element.borderWidth}rem`,
-           
           };
 
           return (
@@ -148,6 +154,9 @@ const Canvas = () => {
                 <img src={element.imageSrc} alt={element.content} style={style}/>
               )}
               {element.type === "container" && (
+                <div style={style}>{element.content}</div>
+              )}
+              {element.type === "group" && (
                 <div style={style}>{element.content}</div>
               )}
             </Rnd>

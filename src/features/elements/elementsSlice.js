@@ -5,6 +5,7 @@ const initialState = {
   selectedElementId: null,
   history: [],
   future: [],
+  zoomlevel: null,
 };
 
 const elementsSlice = createSlice({
@@ -84,8 +85,11 @@ const elementsSlice = createSlice({
       });
       state.future = [];
     },
+    updateZoomLevel: (state, action) => {
+      state.zoomlevel = action.payload;
+    },
   },
 });
 
-export const { addElement, updateElement, deleteElement, selectElement, moveElementUp, moveElementDown, loadProject, undo, redo, groupElements } = elementsSlice.actions;
+export const { addElement, updateElement, deleteElement, selectElement, moveElementUp, moveElementDown, loadProject, undo, redo, groupElements, updateZoomLevel } = elementsSlice.actions;
 export default elementsSlice.reducer;

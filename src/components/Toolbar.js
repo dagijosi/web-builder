@@ -10,13 +10,14 @@ const Toolbar = () => {
   const dispatch = useDispatch();
   const elements = useSelector((state) => state.elements.elements);
   const selectedElementId = useSelector((state) => state.elements.selectedElementId);
+  const zoomLevel = useSelector((state) => state.elements.zoomlevel);
 
   const elementDefaults = {
     text: {
       content: 'Text',
       text: "Text",
-      x: 10,
-      y: 10,
+      x: 0,
+      y: 0,
       width: 100,
       height: 40,
       fontSize: '1.25rem',
@@ -25,8 +26,8 @@ const Toolbar = () => {
     image: {
       content: 'Image',
       text: "Image",
-      x: 20,
-      y: 20,
+      x: 0,
+      y: 0,
       width: 100,
       height: 40,
       src: 'https://via.placeholder.com/300',
@@ -34,8 +35,8 @@ const Toolbar = () => {
     field: {
       content: 'Field',
       text: "Field",
-      x: 30,
-      y: 30,
+      x: 0,
+      y: 0,
       width: 100,
       height: 40,
       placeholder: 'Enter text',
@@ -44,8 +45,8 @@ const Toolbar = () => {
       content: 'Button',
       text: "Button",
       textAlign: 'center',
-      x: 40,
-      y: 40,
+      x: 0,
+      y: 0,
       width: 100,
       height: 40,
       backgroundColor: '#007bff',
@@ -58,6 +59,14 @@ const Toolbar = () => {
       width: 1366,
       height: 768,
       backgroundColor: '#f0f0f0',
+    },
+    group: {
+      text: "Group",
+      x: 0,
+      y: 0,
+      width: 1366,
+      height: 150,
+      backgroundColor: '#ffffff'
     },
   };
 
@@ -72,7 +81,7 @@ const Toolbar = () => {
 
   const handleExport = async () => {
     try {
-      await exportProject(elements);
+      await exportProject(elements,zoomLevel);
       alert('Project exported successfully!');
     } catch (error) {
       console.error('Export Error:', error);

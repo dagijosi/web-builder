@@ -24,7 +24,7 @@ const HierarchyPanel = () => {
   };
 
   return (
-    <div className="fixed top-16 left-0 h-full bg-gray-900 text-white p-3 shadow-lg" style={{ width: "250px" }}>
+    <div className="fixed top-16 left-0 h-[630px] bg-gray-900 text-white p-3 shadow-lg overflow-auto" style={{ width: "250px" }}>
       <h2 className="text-xl font-semibold mb-4 border-b border-gray-700 pb-2">Hierarchy</h2>
       <ul className="space-y-1">
         {elements.map((element, index) => (
@@ -36,7 +36,7 @@ const HierarchyPanel = () => {
               className="flex items-center cursor-pointer hover:text-blue-400"
               onClick={() => handleSelect(element.id)}
             >
-              <span className="font-medium">{element.type}</span> - {element.content}
+              <span className="font-medium text-sm">{element.type}</span> - <span className="text-xs">{element.content}</span>
             </div>
             <div className="flex items-center space-x-1">
               <button
