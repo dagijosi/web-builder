@@ -9,7 +9,7 @@ import {
   updateZoomLevel,
   setParentElement,
 } from "../features/elements/elementsSlice";
-import { FiZoomIn, FiZoomOut, FiRotateCcw, FiTrash2 } from "react-icons/fi"; // Updated icon for reset zoom
+import { FiZoomIn, FiZoomOut, FiRotateCcw, FiTrash2 } from "react-icons/fi";
 import ConfirmationDialog from "./ConfirmationDialog";
 
 const Canvas = () => {

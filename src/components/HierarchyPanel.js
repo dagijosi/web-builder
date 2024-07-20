@@ -47,26 +47,26 @@ const HierarchyPanel = () => {
       <div key={element.id} className={`ml-${level * 4}`}>
         <div
           onClick={() => dispatch(selectElement(element.id))}
-          className={`cursor-pointer flex items-center p-2 rounded hover:bg-gray-300 ${element.id === selectedElementId ? 'bg-blue-100' : ''}`}
+          className={`cursor-pointer flex items-center p-3 rounded-lg hover:bg-gray-200 transition-colors duration-200 ${element.id === selectedElementId ? 'bg-blue-200' : ''}`}
         >
           {children.length > 0 && (
             <div onClick={(e) => { e.stopPropagation(); toggleExpand(element.id); }} className="mr-2">
-              {isExpanded ? <FiChevronDown /> : <FiChevronRight />}
+              {isExpanded ? <FiChevronDown className="text-gray-500" /> : <FiChevronRight className="text-gray-500" />}
             </div>
           )}
-          <div className="flex-grow">{element.type} - <span className="text-xs">{element.content}</span></div>
+          <div className="flex-grow truncate">{element.type} - <span className="text-sm text-gray-600">{element.content}</span></div>
           <div className="flex items-center space-x-2">
             <FiArrowUp
               onClick={(e) => { e.stopPropagation(); canMoveUp && handleMoveUp(element.id); }}
-              className={`cursor-pointer ${!canMoveUp && 'text-gray-400 cursor-not-allowed'}`}
+              className={`cursor-pointer ${!canMoveUp && 'text-gray-400 cursor-not-allowed'} transition-colors duration-150`}
             />
             <FiArrowDown
               onClick={(e) => { e.stopPropagation(); canMoveDown && handleMoveDown(element.id); }}
-              className={`cursor-pointer ${!canMoveDown && 'text-gray-400 cursor-not-allowed'}`}
+              className={`cursor-pointer ${!canMoveDown && 'text-gray-400 cursor-not-allowed'} transition-colors duration-150`}
             />
             <FiTrash2
               onClick={(e) => { e.stopPropagation(); handleDelete(element.id); }}
-              className="cursor-pointer text-red-500"
+              className="cursor-pointer text-red-500 transition-colors duration-150"
             />
           </div>
         </div>
@@ -78,8 +78,8 @@ const HierarchyPanel = () => {
   const rootElements = elements.filter(el => !el.parentId);
 
   return (
-    <div className="hierarchy-panel bg-white shadow-md p-4 w-64 fixed top-0 left-0 h-[630px] overflow-y-auto mt-16 z-10">
-      <h2 className="text-xl font-bold mb-4">Hierarchy</h2>
+    <div className="hierarchy-panel bg-white shadow-lg p-4 w-64 fixed top-0 left-0 h-[630px] overflow-y-auto mt-16 z-10">
+      <h2 className="text-xl font-semibold mb-4">Hierarchy</h2>
       {rootElements.map(element => renderElementHierarchy(element))}
       <ConfirmationDialog
         isOpen={confirmationDialog.isOpen}
