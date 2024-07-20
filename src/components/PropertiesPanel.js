@@ -10,7 +10,7 @@ const renderCommonProperties = (selectedElement, handleChange) => (
     <PropertyInput
       label="Width"
       name="width"
-      value={selectedElement.width}
+      value={selectedElement.width || ""}
       onChange={handleChange}
       type="number"
       unit="px"
@@ -18,7 +18,7 @@ const renderCommonProperties = (selectedElement, handleChange) => (
     <PropertyInput
       label="Height"
       name="height"
-      value={selectedElement.height}
+      value={selectedElement.height || ""}
       onChange={handleChange}
       type="number"
       unit="px"
@@ -26,7 +26,7 @@ const renderCommonProperties = (selectedElement, handleChange) => (
     <PropertyInput
       label="X Position"
       name="x"
-      value={selectedElement.x}
+      value={selectedElement.x || ""}
       onChange={handleChange}
       type="number"
       unit="px"
@@ -34,7 +34,7 @@ const renderCommonProperties = (selectedElement, handleChange) => (
     <PropertyInput
       label="Y Position"
       name="y"
-      value={selectedElement.y}
+      value={selectedElement.y || ""}
       onChange={handleChange}
       type="number"
       unit="px"
@@ -169,11 +169,11 @@ const renderButtonProperties = (selectedElement, handleChange) => (
       unit="rem"
     />
     <DropdownInput
-    label="Cursor"
-    name="cursor"
-    value={selectedElement.cursor || ""}
-    onChange={handleChange}
-    displayOptions={["auto", "default", "pointer", "move", "not-allowed"]}
+      label="Cursor"
+      name="cursor"
+      value={selectedElement.cursor || ""}
+      onChange={handleChange}
+      displayOptions={["auto", "default", "pointer", "move", "not-allowed"]}
     />
   </>
 );
@@ -225,6 +225,7 @@ const renderContainerProperties = (selectedElement, handleChange) => (
     />
   </>
 );
+
 const renderGroupProperties = (selectedElement, handleChange) => (
   <>
     <PropertyInput
@@ -293,7 +294,7 @@ const PropertiesPanel = () => {
           <PropertyInput
             label="Content"
             name="content"
-            value={selectedElement.content}
+            value={selectedElement.content || ""}
             onChange={handleChange}
           />
           {renderCommonProperties(selectedElement, handleChange)}
@@ -308,7 +309,7 @@ const PropertiesPanel = () => {
           {selectedElement.type === "container" &&
             renderContainerProperties(selectedElement, handleChange)}
           {selectedElement.type === "group" &&
-           renderGroupProperties(selectedElement, handleChange)}
+            renderGroupProperties(selectedElement, handleChange)}
           <button
             onClick={handleDelete}
             className="w-full bg-red-500 text-white rounded px-4 py-1.5 hover:bg-red-600 focus:outline-none text-sm"

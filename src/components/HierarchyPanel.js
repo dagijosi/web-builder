@@ -1,19 +1,19 @@
 // src/components/HierarchyPanel.js
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  selectElement,
-  moveElementUp,
-  moveElementDown,
-} from "../features/elements/elementsSlice";
-import { FaArrowUp, FaArrowDown, FaEllipsisV } from "react-icons/fa";
+import { selectElement, moveElementUp, moveElementDown } from "../features/elements/elementsSlice";
+import { FiChevronDown, FiChevronRight, FiArrowUp, FiArrowDown } from "react-icons/fi";
 
 const HierarchyPanel = () => {
   const elements = useSelector((state) => state.elements.elements);
+  const selectedElementId = useSelector((state) => state.elements.selectedElementId);
   const dispatch = useDispatch();
+  const [expandedElements, setExpandedElements] = React.useState([]);
 
-  const handleSelect = (id) => {
-    dispatch(selectElement(id));
+  const toggleExpand = (id) => {
+    setExpandedElements((prev) =>
+      prev.includes(id) ? prev.filter((el) => el !== id) : [...prev, id]
+    );
   };
 
   const handleMoveUp = (id) => {
@@ -24,50 +24,48 @@ const HierarchyPanel = () => {
     dispatch(moveElementDown(id));
   };
 
+  const renderElementHierarchy = (element, level = 0) => {
+    const children = elements.filter(el => el.parentId === element.id);
+    const isExpanded = expandedElements.includes(element.id);
+    const elementIndex = elements.findIndex(el => el.id === element.id);
+
+    const canMoveUp = elementIndex > 0;
+    const canMoveDown = elementIndex < elements.length - 1;
+
+    return (
+      <div key={element.id} className={`ml-${level * 4}`}>
+        <div
+          onClick={() => dispatch(selectElement(element.id))}
+          className={`cursor-pointer flex items-center p-2 rounded hover:bg-gray-300 ${element.id === selectedElementId ? 'bg-blue-100' : ''}`}
+        >
+          {children.length > 0 && (
+            <div onClick={(e) => { e.stopPropagation(); toggleExpand(element.id); }} className="mr-2">
+              {isExpanded ? <FiChevronDown /> : <FiChevronRight />}
+            </div>
+          )}
+          <div className="flex-grow">{element.type} - <span className="text-xs">{element.content}</span></div>
+          <div className="flex items-center space-x-2">
+            <FiArrowUp
+              onClick={(e) => { e.stopPropagation(); canMoveUp && handleMoveUp(element.id); }}
+              className={`cursor-pointer ${!canMoveUp && 'text-gray-400 cursor-not-allowed'}`}
+            />
+            <FiArrowDown
+              onClick={(e) => { e.stopPropagation(); canMoveDown && handleMoveDown(element.id); }}
+              className={`cursor-pointer ${!canMoveDown && 'text-gray-400 cursor-not-allowed'}`}
+            />
+          </div>
+        </div>
+        {isExpanded && children.map(child => renderElementHierarchy(child, level + 1))}
+      </div>
+    );
+  };
+
+  const rootElements = elements.filter(el => !el.parentId);
+
   return (
-    <div className="fixed top-16 left-0 h-[630px] bg-gray-900 text-white p-3 shadow-lg overflow-auto" style={{ width: "250px" }}>
-      <h2 className="text-xl font-semibold mb-4 border-b border-gray-700 pb-2">Hierarchy</h2>
-      <ul className="space-y-1">
-        {elements.map((element, index) => (
-          <li
-            key={element.id}
-            className="flex justify-between items-center p-2 bg-gray-800 rounded-md hover:bg-gray-700 transition duration-150"
-          >
-            <div
-              className="flex items-center cursor-pointer hover:text-blue-400"
-              onClick={() => handleSelect(element.id)}
-            >
-              <span className="font-medium text-sm">{element.type}</span> - <span className="text-xs">{element.content}</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <button
-                onClick={() => handleMoveUp(element.id)}
-                className={`p-1 rounded ${
-                  index === 0 ? "opacity-50 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
-                }`}
-                disabled={index === 0}
-              >
-                <FaArrowUp />
-              </button>
-              <button
-                onClick={() => handleMoveDown(element.id)}
-                className={`p-1 rounded ${
-                  index === elements.length - 1 ? "opacity-50 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
-                }`}
-                disabled={index === elements.length - 1}
-              >
-                <FaArrowDown />
-              </button>
-              <button
-                className="p-1 rounded bg-gray-700 hover:bg-gray-600"
-                onClick={() => {} /* Add functionality for more options */}
-              >
-                <FaEllipsisV className="text-white" />
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+    <div className="hierarchy-panel bg-white shadow-md p-4 w-64 fixed top-0 left-0 h-[630px] overflow-y-auto mt-16">
+      <h2 className="text-xl font-bold mb-4">Hierarchy</h2>
+      {rootElements.map(element => renderElementHierarchy(element))}
     </div>
   );
 };

@@ -7,8 +7,9 @@ import {
   selectElement,
   deleteElement,
   updateZoomLevel,
+  setParentElement,
 } from "../features/elements/elementsSlice";
-import { FiZoomIn, FiZoomOut, FiRotateCcw, FiTrash2 } from "react-icons/fi"; // Updated icon for reset zoom
+import { FiZoomIn, FiZoomOut, FiRotateCcw, FiTrash2 } from "react-icons/fi";
 
 const Canvas = () => {
   const elements = useSelector((state) => state.elements.elements);
@@ -16,7 +17,7 @@ const Canvas = () => {
   const zoomLevel = useSelector((state) => state.elements.zoomlevel);
   const dispatch = useDispatch();
   const [zoom, setZoom] = useState(1);
-  const gridSize = 1; // Reduced grid size
+  const gridSize = 1;
 
   const snapToGrid = (value, gridSize) => Math.round(value / gridSize) * gridSize;
 
@@ -24,6 +25,21 @@ const Canvas = () => {
     const x = snapToGrid(d.x, gridSize);
     const y = snapToGrid(d.y, gridSize);
     dispatch(updateElement({ id, properties: { x, y } }));
+
+    elements.forEach((element) => {
+      if (element.id !== id && isWithinBounds(x, y, element)) {
+        dispatch(setParentElement({ childId: id, parentId: element.id }));
+      }
+    });
+  };
+
+  const isWithinBounds = (x, y, element) => {
+    const elementX = element.x;
+    const elementY = element.y;
+    const elementWidth = element.width;
+    const elementHeight = element.height;
+
+    return x >= elementX && y >= elementY && x <= elementX + elementWidth && y <= elementY + elementHeight;
   };
 
   const handleResizeStop = (id, e, direction, ref, delta, position) => {
@@ -35,20 +51,20 @@ const Canvas = () => {
   };
 
   const handleZoomIn = () => {
-    setZoom((zoom) => Math.min(zoom + 0.1, 3)); // Max zoom level of 3
-    const zoomlevel=  zoom + 0.1
-    dispatch(updateZoomLevel(zoomlevel))
+    setZoom((zoom) => Math.min(zoom + 0.1, 3));
+    const zoomlevel = zoom + 0.1;
+    dispatch(updateZoomLevel(zoomlevel));
   };
 
   const handleZoomOut = () => {
-    setZoom((zoom) => Math.max(zoom - 0.1, 0.5)); // Min zoom level of 0.5
-    const zoomlevel= zoom - 0.1
-    dispatch(updateZoomLevel(zoomlevel))
+    setZoom((zoom) => Math.max(zoom - 0.1, 0.5));
+    const zoomlevel = zoom - 0.1;
+    dispatch(updateZoomLevel(zoomlevel));
   };
 
   const handleResetZoom = () => {
-    setZoom(1); // Reset zoom level to 1x
-    dispatch(updateZoomLevel(1))
+    setZoom(1);
+    dispatch(updateZoomLevel(1));
   };
 
   const handleDelete = () => {
@@ -56,11 +72,10 @@ const Canvas = () => {
       dispatch(deleteElement(selectedElementId));
     }
   };
-console.log(zoom,zoomLevel)
+
   return (
     <div className="canvas bg-gray-100 relative w-full h-full ml-64 mt-16">
-            {/* Zoom Controls */}
-            <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-10 flex space-x-2">
+      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-10 flex space-x-2">
         <button
           onClick={handleZoomIn}
           className="btn bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
@@ -91,7 +106,6 @@ console.log(zoom,zoomLevel)
         </button>
       </div>
 
-      {/* Canvas Area */}
       <div style={{ transform: `scale(${zoom})`, transformOrigin: 'top left' }} className="relative">
         {elements.map((element) => {
           const style = {
@@ -118,21 +132,20 @@ console.log(zoom,zoomLevel)
             borderRadius: `${element.borderRadius}rem`,
             borderColor: element.borderColor,
             borderWidth: `${element.borderWidth}rem`,
-            boxSizing: 'border-box', // Add this line to include the border in element dimensions
+            boxSizing: 'border-box',
           };
 
           return (
             <Rnd
               key={element.id}
-              size={{ width: element.width, height: element.height }}
               position={{ x: element.x, y: element.y }}
               onDragStop={(e, d) => handleDragStop(element.id, e, d)}
               onResizeStop={(e, direction, ref, delta, position) =>
                 handleResizeStop(element.id, e, direction, ref, delta, position)
               }
-             
+              bounds="parent"
               onClick={() => dispatch(selectElement(element.id))}
-              style={{ border: "1px solid transparent" }}
+              style={{ border: "1px solid transparent", width: `${element.width}px`, height: `${element.height}px` }}
               onMouseOver={(e) => e.currentTarget.style.border = "1px solid red"}
               onMouseOut={(e) => e.currentTarget.style.border = "1px solid transparent"}
             >
@@ -155,7 +168,7 @@ console.log(zoom,zoomLevel)
                 />
               )}
               {element.type === "image" && (
-                <img src={element.imageSrc} alt={element.content} style={style}/>
+                <img src={element.imageSrc} alt={element.content} style={style} />
               )}
               {element.type === "container" && (
                 <div style={style}>{element.content}</div>
