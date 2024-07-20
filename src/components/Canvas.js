@@ -9,7 +9,8 @@ import {
   updateZoomLevel,
   setParentElement,
 } from "../features/elements/elementsSlice";
-import { FiZoomIn, FiZoomOut, FiRotateCcw, FiTrash2 } from "react-icons/fi";
+import { FiZoomIn, FiZoomOut, FiRotateCcw, FiTrash2 } from "react-icons/fi"; // Updated icon for reset zoom
+import ConfirmationDialog from "./ConfirmationDialog";
 
 const Canvas = () => {
   const elements = useSelector((state) => state.elements.elements);
@@ -17,7 +18,8 @@ const Canvas = () => {
   const zoomLevel = useSelector((state) => state.elements.zoomlevel);
   const dispatch = useDispatch();
   const [zoom, setZoom] = useState(1);
-  const gridSize = 1;
+  const [confirmationDialog, setConfirmationDialog] = useState({ isOpen: false, elementId: null });
+  const gridSize = 1; // Reduced grid size
 
   const snapToGrid = (value, gridSize) => Math.round(value / gridSize) * gridSize;
 
@@ -26,6 +28,7 @@ const Canvas = () => {
     const y = snapToGrid(d.y, gridSize);
     dispatch(updateElement({ id, properties: { x, y } }));
 
+    // Check if the element is within the bounds of another element
     elements.forEach((element) => {
       if (element.id !== id && isWithinBounds(x, y, element)) {
         dispatch(setParentElement({ childId: id, parentId: element.id }));
@@ -51,30 +54,36 @@ const Canvas = () => {
   };
 
   const handleZoomIn = () => {
-    setZoom((zoom) => Math.min(zoom + 0.1, 3));
-    const zoomlevel = zoom + 0.1;
-    dispatch(updateZoomLevel(zoomlevel));
+    setZoom((zoom) => Math.min(zoom + 0.1, 3)); // Max zoom level of 3
+    const zoomlevel=  zoom + 0.1
+    dispatch(updateZoomLevel(zoomlevel))
   };
 
   const handleZoomOut = () => {
-    setZoom((zoom) => Math.max(zoom - 0.1, 0.5));
-    const zoomlevel = zoom - 0.1;
-    dispatch(updateZoomLevel(zoomlevel));
+    setZoom((zoom) => Math.max(zoom - 0.1, 0.5)); // Min zoom level of 0.5
+    const zoomlevel= zoom - 0.1
+    dispatch(updateZoomLevel(zoomlevel))
   };
 
   const handleResetZoom = () => {
-    setZoom(1);
-    dispatch(updateZoomLevel(1));
+    setZoom(1); // Reset zoom level to 1x
+    dispatch(updateZoomLevel(1))
   };
 
   const handleDelete = () => {
     if (selectedElementId) {
-      dispatch(deleteElement(selectedElementId));
+      setConfirmationDialog({ isOpen: true, elementId: selectedElementId });
     }
+  };
+
+  const confirmDelete = () => {
+    dispatch(deleteElement(confirmationDialog.elementId));
+    setConfirmationDialog({ isOpen: false, elementId: null });
   };
 
   return (
     <div className="canvas bg-gray-100 relative w-full h-full ml-64 mt-16">
+      {/* Zoom Controls */}
       <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-10 flex space-x-2">
         <button
           onClick={handleZoomIn}
@@ -106,6 +115,7 @@ const Canvas = () => {
         </button>
       </div>
 
+      {/* Canvas Area */}
       <div style={{ transform: `scale(${zoom})`, transformOrigin: 'top left' }} className="relative">
         {elements.map((element) => {
           const style = {
@@ -132,18 +142,18 @@ const Canvas = () => {
             borderRadius: `${element.borderRadius}rem`,
             borderColor: element.borderColor,
             borderWidth: `${element.borderWidth}rem`,
-            boxSizing: 'border-box',
+            boxSizing: 'border-box', // Add this line to include the border in element dimensions
           };
 
           return (
             <Rnd
               key={element.id}
               position={{ x: element.x, y: element.y }}
+              size={{ width: `${element.width}px`, height: `${element.height}px` }}
               onDragStop={(e, d) => handleDragStop(element.id, e, d)}
               onResizeStop={(e, direction, ref, delta, position) =>
                 handleResizeStop(element.id, e, direction, ref, delta, position)
               }
-              bounds="parent"
               onClick={() => dispatch(selectElement(element.id))}
               style={{ border: "1px solid transparent", width: `${element.width}px`, height: `${element.height}px` }}
               onMouseOver={(e) => e.currentTarget.style.border = "1px solid red"}
@@ -180,6 +190,12 @@ const Canvas = () => {
           );
         })}
       </div>
+      <ConfirmationDialog
+        isOpen={confirmationDialog.isOpen}
+        onClose={() => setConfirmationDialog({ isOpen: false, elementId: null })}
+        onConfirm={confirmDelete}
+        message="Are you sure you want to delete this element?"
+      />
     </div>
   );
 };
