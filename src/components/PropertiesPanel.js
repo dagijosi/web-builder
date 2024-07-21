@@ -118,7 +118,9 @@ const PropertiesPanel = () => {
               visibility.text,
               () => toggleVisibility("text"),
               visibility.font,
-              () => toggleVisibility("font")
+              () => toggleVisibility("font"),
+              visibility.flexWrap,
+              () => toggleVisibility("flexWrap")
             )}
           {selectedElement.type === "button" &&
             renderButtonProperties(

@@ -14,6 +14,7 @@ export const renderGroupProperties = (
     <button
       onClick={() => setShowCardProperties(!showCardProperties)}
       className="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 w-full p-1 focus:outline-none rounded-md mb-2"
+      aria-expanded={showCardProperties}
     >
       <span>
         {showCardProperties ? <FiChevronDown /> : <FiChevronRight />}
@@ -22,13 +23,43 @@ export const renderGroupProperties = (
     </button>
     {showCardProperties && (
       <div className="grid grid-cols-2 gap-2">
-    <PropertyInput
-      label="Shadow"
-      name="shadow"
-      value={selectedElement.shadow || ""}
-      onChange={handleChange}
-    />
-    <PropertyInput
+        <PropertyInput
+          label="Shadow X Offset"
+          name="shadowXOffset"
+          value={selectedElement.shadowXOffset || ""}
+          onChange={handleChange}
+        />
+        <PropertyInput
+          label="Shadow Y Offset"
+          name="shadowYOffset"
+          value={selectedElement.shadowYOffset || ""}
+          onChange={handleChange}
+        />
+        <PropertyInput
+          label="Shadow Blur Radius"
+          name="shadowBlurRadius"
+          value={selectedElement.shadowBlurRadius || ""}
+          onChange={handleChange}
+        />
+        <PropertyInput
+          label="Shadow Spread Radius"
+          name="shadowSpreadRadius"
+          value={selectedElement.shadowSpreadRadius || ""}
+          onChange={handleChange}
+        />
+        <PropertyInput
+          label="Shadow Color"
+          name="shadowColor"
+          value={selectedElement.shadowColor || ""}
+          onChange={handleChange}
+        />
+        <PropertyInput
+          label="Shadow Inset"
+          name="shadowInset"
+          value={selectedElement.shadowInset || ""}
+          onChange={handleChange}
+        />
+        <PropertyInput
           label="Hover Background Color"
           name="hoverBackgroundColor"
           value={selectedElement.hoverBackgroundColor || ""}
@@ -46,18 +77,26 @@ export const renderGroupProperties = (
           value={selectedElement.hoverShadow || ""}
           onChange={handleChange}
         />
-         <DropdownInput
-          label="Overflow"
-          name="overflow"
-          value={selectedElement.overflow || "visible"}
+        <DropdownInput
+          label="Overflow X"
+          name="overflowX"
+          value={selectedElement.overflowX || "visible"}
           onChange={handleChange}
-          displayOptions={["visible", "hidden", "scroll"]}
+          displayOptions={["visible", "hidden", "scroll", "auto"]}
         />
-    </div>
+        <DropdownInput
+          label="Overflow Y"
+          name="overflowY"
+          value={selectedElement.overflowY || "visible"}
+          onChange={handleChange}
+          displayOptions={["visible", "hidden", "scroll", "auto"]}
+        />
+      </div>
     )}
     <button
       onClick={() => setShowFlexWrapProperties(!showFlexWrapProperties)}
       className="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 w-full p-1 focus:outline-none rounded-md mb-2"
+      aria-expanded={showFlexWrapProperties}
     >
       <span>
         {showFlexWrapProperties ? <FiChevronDown /> : <FiChevronRight />}

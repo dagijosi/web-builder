@@ -12,7 +12,11 @@ import { loadProject, addElement } from './features/elements/elementsSlice';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 const project = loadProjectFromStorage();
-project.forEach(element => store.dispatch(addElement(element)));
+if (Array.isArray(project)) {
+  project.forEach(element => store.dispatch(addElement(element)));
+} else {
+  console.error('Loaded project is not an array:', project);
+}
 
 root.render(
   <React.StrictMode>

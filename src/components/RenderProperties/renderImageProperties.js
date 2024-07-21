@@ -29,12 +29,6 @@ export const renderImageProperties = (
         onChange={handleChange}
         type="file"
       />
-      <PropertyInput
-        label="Alt Text"
-        name="alt"
-        value={selectedElement.alt || ""}
-        onChange={handleChange}
-      />
       <DropdownInput
         label="Object Fit"
         name="objectFit"
@@ -83,7 +77,7 @@ export const renderImageProperties = (
     <span className="text-xs font-semibold">Effects Properties</span>
   </button>
   {showEffectsProperties && (
-    <div className="grid grid-cols-2 gap-2">
+    <div>
       <PropertyInput
         label="Hover Effects"
         name="hoverEffects"

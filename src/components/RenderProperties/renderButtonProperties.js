@@ -44,9 +44,9 @@ export const renderButtonProperties = (
           displayOptions={["auto", "default", "pointer", "move", "not-allowed"]}
         />
         <DropdownInput
-          label="Type"
-          name="type"
-          value={selectedElement.type || "button"}
+          label="Button Type"
+          name="buttonType"
+          value={selectedElement.buttonType || "button"}
           onChange={handleChange}
           displayOptions={["button", "submit", "reset"]}
         />

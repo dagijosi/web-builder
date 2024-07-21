@@ -29,8 +29,8 @@ export const renderTextProperties = (
         />
         <PropertyInput
           label="Text Color"
-          name="color"
-          value={selectedElement.color || "#000000"}
+          name="textColor"
+          value={selectedElement.textColor || "#000000"}
           onChange={handleChange}
           type="color"
         />
@@ -119,14 +119,14 @@ export const renderTextProperties = (
         <PropertyInput
           label="Font Weight"
           name="fontWeight"
-          value={selectedElement.fontWeight || "400"}
+          value={selectedElement.fontWeight || ""}
           onChange={handleChange}
           type="number"
         />
         <PropertyInput
           label="Letter Spacing"
           name="letterSpacing"
-          value={selectedElement.letterSpacing || "0"}
+          value={selectedElement.letterSpacing || ""}
           onChange={handleChange}
           type="number"
           unit="rem"

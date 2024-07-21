@@ -7,6 +7,7 @@ const initialState = {
   history: [],
   future: [],
   zoomlevel: null,
+  gaps: {},
 };
 
 const elementsSlice = createSlice({
@@ -110,6 +111,14 @@ const elementsSlice = createSlice({
         }
       }
     },
+    reorderElements: (state, action) => {
+      state.history.push([...state.elements]);
+      state.elements = action.payload;
+      state.future = [];
+    },
+    updateGaps: (state, action) => {
+      state.gaps = action.payload;
+    },
   },
 });
 
@@ -126,6 +135,8 @@ export const {
   groupElements,
   updateZoomLevel,
   setParentElement,
+  reorderElements,
+  updateGaps,
 } = elementsSlice.actions;
 
 export default elementsSlice.reducer;
