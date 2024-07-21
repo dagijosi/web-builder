@@ -277,10 +277,10 @@ const Canvas = () => {
                 />
               )}
               {element.type === "container" && (
-                <div style={style}>{element.content}</div>
+                <div style={style}></div>
               )}
               {element.type === "group" && (
-                <div style={style}>{element.content}</div>
+                <div style={style}></div>
               )}
             </Rnd>
           );

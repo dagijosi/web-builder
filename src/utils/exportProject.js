@@ -6,17 +6,28 @@ export const exportProject = (elements, zoomLevel) => {
   const calculatePercentage = (value, total) => (value / total) * 100;
 
   const generateElementStyle = (element, parentElement) => {
-    const containerElement = parentElement || elements.find((el) => el.type === "container");
+    const containerElement =
+      parentElement || elements.find((el) => el.type === "container");
 
     let style = `
     position: absolute;
-    left: ${calculatePercentage(element.x - containerElement.x, containerElement.width)}%;
-    top: ${calculatePercentage(element.y - containerElement.y, containerElement.height)}%;
+    left: ${calculatePercentage(
+      element.x - containerElement.x,
+      containerElement.width
+    )}%;
+    top: ${calculatePercentage(
+      element.y - containerElement.y,
+      containerElement.height
+    )}%;
     width: ${calculatePercentage(element.width, containerElement.width)}%;
     height: ${calculatePercentage(element.height, containerElement.height)}%;
     ${element.paddingTop ? `padding-top: ${element.paddingTop}rem;` : ""}
     ${element.paddingRight ? `padding-right: ${element.paddingRight}rem;` : ""}
-    ${element.paddingBottom ? `padding-bottom: ${element.paddingBottom}rem;` : ""}
+    ${
+      element.paddingBottom
+        ? `padding-bottom: ${element.paddingBottom}rem;`
+        : ""
+    }
     ${element.paddingLeft ? `padding-left: ${element.paddingLeft}rem;` : ""}
     ${element.marginTop ? `margin-top: ${element.marginTop}rem;` : ""}
     ${element.marginRight ? `margin-right: ${element.marginRight}rem;` : ""}
@@ -25,7 +36,11 @@ export const exportProject = (elements, zoomLevel) => {
     ${element.fontSize ? `font-size: ${element.fontSize}rem;` : ""}
     ${element.fontFamily ? `font-family: ${element.fontFamily};` : ""}
     ${element.textColor ? `color: ${element.textColor};` : ""}
-    ${element.backgroundColor ? `background-color: ${element.backgroundColor};` : ""}
+    ${
+      element.backgroundColor
+        ? `background-color: ${element.backgroundColor};`
+        : ""
+    }
     ${element.textAlign ? `text-align: ${element.textAlign};` : ""}
     ${element.cursor ? `cursor: ${element.cursor};` : ""}
     ${element.objectFit ? `object-fit: ${element.objectFit};` : ""}
@@ -33,7 +48,11 @@ export const exportProject = (elements, zoomLevel) => {
     ${element.borderColor ? `border-color: ${element.borderColor};` : ""}
     ${element.borderWidth ? `border-width: ${element.borderWidth}rem;` : ""}
     ${element.alignItems ? `align-items: ${element.alignItems};` : ""}
-    ${element.justifyContent ? `justify-content: ${element.justifyContent};` : ""}
+    ${
+      element.justifyContent
+        ? `justify-content: ${element.justifyContent};`
+        : ""
+    }
     ${element.display ? `display: ${element.display};` : ""}
     ${element.opacity ? `opacity: ${element.opacity};` : ""}
     ${element.filter ? `filter: ${element.filter};` : ""}
@@ -42,7 +61,11 @@ export const exportProject = (elements, zoomLevel) => {
     ${element.overflowY ? `overflow-y: ${element.overflowY};` : ""}
     ${element.shadow ? `box-shadow: ${element.shadow};` : ""}
     ${element.flexDirection ? `flex-direction: ${element.flexDirection};` : ""}
-    ${element.textDecoration ? `text-decoration: ${element.textDecoration};` : ""}
+    ${
+      element.textDecoration
+        ? `text-decoration: ${element.textDecoration};`
+        : ""
+    }
     ${element.textTransform ? `text-transform: ${element.textTransform};` : ""}
     ${element.textShadow ? `text-shadow: ${element.textShadow};` : ""}
     ${element.textOverflow ? `text-overflow: ${element.textOverflow};` : ""}
@@ -51,7 +74,11 @@ export const exportProject = (elements, zoomLevel) => {
     ${element.textIndent ? `text-indent: ${element.textIndent}rem;` : ""}
     ${element.verticalAlign ? `vertical-align: ${element.verticalAlign};` : ""}
     ${element.fontWeight ? `font-weight: ${element.fontWeight};` : ""}
-    ${element.letterSpacing ? `letter-spacing: ${element.letterSpacing}rem;` : ""}
+    ${
+      element.letterSpacing
+        ? `letter-spacing: ${element.letterSpacing}rem;`
+        : ""
+    }
     ${element.lineHeight ? `line-height: ${element.lineHeight};` : ""}
     ${element.type === "button" ? `cursor: pointer;` : ""}
     ${element.disabled ? `opacity: 0.5; pointer-events: none;` : ""}
@@ -64,7 +91,9 @@ export const exportProject = (elements, zoomLevel) => {
     const children = elements.filter((el) => el.parentId === element.id);
     const style = generateElementStyle(element, parentElement);
 
-    const childElementsHTML = children.map((child) => generateElementHTML(child, elements, element)).join("\n");
+    const childElementsHTML = children
+      .map((child) => generateElementHTML(child, elements, element))
+      .join("\n");
 
     switch (element.type) {
       case "text":
@@ -94,13 +123,22 @@ export const exportProject = (elements, zoomLevel) => {
     left: ${calculatePercentage(containerElement.x, laptopScreenWidth)}%;
     top: ${calculatePercentage(containerElement.y, laptopScreenHeight)}%;
     width: ${calculatePercentage(containerElement.width, laptopScreenWidth)}%;
-    height: ${calculatePercentage(containerElement.height, laptopScreenHeight)}%;
-    ${containerElement.backgroundColor ? `background-color: ${containerElement.backgroundColor};` : ""}
+    height: ${calculatePercentage(
+      containerElement.height,
+      laptopScreenHeight
+    )}%;
+    ${
+      containerElement.backgroundColor
+        ? `background-color: ${containerElement.backgroundColor};`
+        : ""
+    }
   `;
 
   const rootElements = elements.filter((el) => !el.parentId);
 
-  const containerContent = rootElements.map((element) => generateElementHTML(element, elements, containerElement)).join("\n");
+  const containerContent = rootElements
+    .map((element) => generateElementHTML(element, elements, containerElement))
+    .join("\n");
 
   const htmlContent = `
     <html>
@@ -114,60 +152,139 @@ export const exportProject = (elements, zoomLevel) => {
           ${containerContent}
         </div>
         <script>
-          ${elements.map((element) => {
-            return `
-              ${element.clickEffect ? `
+          ${elements
+            .map((element, index) => {
+              return `
+              ${
+                element.clickEffect
+                  ? `
                 document.querySelector('[data-id="${element.id}"]').addEventListener('click', function() {
                   ${element.clickEffect}
                 });
-              ` : ""}
-              ${element.hoverBackgroundColor || element.hoverBorderColor || element.hoverShadow ? `
-                const hoverElement = document.querySelector('[data-id="${element.id}"]');
+              `
+                  : ""
+              }
+              ${element.activeColor
+                              ? `
+           const activeElement_${index} = document.querySelector('[data-id="${element.id}"]');
+             activeElement_${index}.addEventListener('click', function() {
+               if (!this.classList.contains('active')) {
+                  this.style.backgroundColor = '${element.activeColor}';
+                   this.classList.add('active');
+                 } else {
+                   this.style.backgroundColor = '';
+                this.classList.remove('active');
+                 }
+             });
+             `
+                              : ""
+                          }
+              ${
+                element.hoverBackgroundColor ||
+                element.hoverBorderColor ||
+                element.hoverShadow
+                  ? `
+                const hoverElement = document.querySelector('[data-id="${
+                  element.id
+                }"]');
                 hoverElement.addEventListener('mouseenter', function() {
-                  ${element.hoverBackgroundColor ? `this.style.backgroundColor = '${element.hoverBackgroundColor}';` : ""}
-                  ${element.hoverBorderColor ? `this.style.borderColor = '${element.hoverBorderColor}';` : ""}
-                  ${element.hoverShadow ? `this.style.boxShadow = '${element.hoverShadow}';` : ""}
+                  ${
+                    element.hoverBackgroundColor
+                      ? `this.style.backgroundColor = '${element.hoverBackgroundColor}';`
+                      : ""
+                  }
+                  ${
+                    element.hoverBorderColor
+                      ? `this.style.borderColor = '${element.hoverBorderColor}';`
+                      : ""
+                  }
+                  ${
+                    element.hoverShadow
+                      ? `this.style.boxShadow = '${element.hoverShadow}';`
+                      : ""
+                  }
                 });
                 hoverElement.addEventListener('mouseleave', function() {
-                  ${element.hoverBackgroundColor ? `this.style.backgroundColor = '';` : ""}
-                  ${element.hoverBorderColor ? `this.style.borderColor = '';` : ""}
+                  ${
+                    element.hoverBackgroundColor
+                      ? `this.style.backgroundColor = '';`
+                      : ""
+                  }
+                  ${
+                    element.hoverBorderColor
+                      ? `this.style.borderColor = '';`
+                      : ""
+                  }
                   ${element.hoverShadow ? `this.style.boxShadow = '';` : ""}
                 });
-              ` : ""}
-              ${element.hoverColor ? `
-                const hoverElement = document.querySelector('[data-id="${element.id}"]');
-                hoverElement.addEventListener('mouseenter', function() {
+              `
+                  : ""
+              }
+              ${
+                element.hoverColor
+                  ? `
+                const hoverElement_${index} = document.querySelector('[data-id="${element.id}"]');
+                hoverElement_${index}.addEventListener('mouseenter', function() {
                   this.style.backgroundColor = '${element.hoverColor}';
                 });
-                hoverElement.addEventListener('mouseleave', function() {
+                hoverElement_${index}.addEventListener('mouseleave', function() {
                   this.style.backgroundColor = '${element.backgroundColor}';
                 });
-              ` : ""}
-              ${element.required ? `
+              `
+                  : ""
+              }
+             
+              ${
+                element.required
+                  ? `
                 const inputElement = document.querySelector('[data-id="${element.id}"]');
                 inputElement.required = true;
-              ` : ""}
-              ${element.maxLength ? `
+              `
+                  : ""
+              }
+              ${
+                element.maxLength
+                  ? `
                 const maxLengthElement = document.querySelector('[data-id="${element.id}"]');
                 maxLengthElement.maxLength = ${element.maxLength};
-              ` : ""}
-              ${element.minLength ? `
+              `
+                  : ""
+              }
+              ${
+                element.minLength
+                  ? `
                 const minLengthElement = document.querySelector('[data-id="${element.id}"]');
                 minLengthElement.minLength = ${element.minLength};
-              ` : ""}
-              ${element.fieldType ? `
+              `
+                  : ""
+              }
+              ${
+                element.fieldType
+                  ? `
                 const fieldTypeElement = document.querySelector('[data-id="${element.id}"]');
                 fieldTypeElement.type = '${element.fieldType}';
-              ` : ""}
-              ${element.placeholder ? `
+              `
+                  : ""
+              }
+              ${
+                element.placeholder
+                  ? `
                 const placeholderElement = document.querySelector('[data-id="${element.id}"]');
                 placeholderElement.placeholder = '${element.placeholder}';
-              ` : ""}
-              ${element.value ? `
+              `
+                  : ""
+              }
+              ${
+                element.value
+                  ? `
                 const valueElement = document.querySelector('[data-id="${element.id}"]');
                 valueElement.value = '${element.value}';
-              ` : ""}
-              ${element.hoverEffects ? `
+              `
+                  : ""
+              }
+              ${
+                element.hoverEffects
+                  ? `
                 const hoverEffectsElement = document.querySelector('[data-id="${element.id}"]');
                 hoverEffectsElement.addEventListener('mouseenter', function() {
                   ${element.hoverEffects.enter}
@@ -175,9 +292,12 @@ export const exportProject = (elements, zoomLevel) => {
                 hoverEffectsElement.addEventListener('mouseleave', function() {
                   ${element.hoverEffects.leave}
                 });
-              ` : ""}
+              `
+                  : ""
+              }
             `;
-          }).join("\n")}
+            })
+            .join("\n")}
         </script>
       </body>
     </html>
