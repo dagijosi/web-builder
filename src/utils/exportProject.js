@@ -59,7 +59,11 @@ export const exportProject = (elements, zoomLevel) => {
     ${element.transition ? `transition: ${element.transition};` : ""}
     ${element.overflowX ? `overflow-x: ${element.overflowX};` : ""}
     ${element.overflowY ? `overflow-y: ${element.overflowY};` : ""}
-    ${element.shadow ? `box-shadow: ${element.shadow};` : ""}
+    ${
+      element.shadow
+        ? `box-shadow: ${element.shadowXoffset}px ${element.shadowYoffset}px ${element.shadowBlur}px ${element.shadowSpread}px ${element.shadowColor};`
+        : ""
+    }
     ${element.flexDirection ? `flex-direction: ${element.flexDirection};` : ""}
     ${
       element.textDecoration
@@ -164,8 +168,9 @@ export const exportProject = (elements, zoomLevel) => {
               `
                   : ""
               }
-              ${element.activeColor
-                              ? `
+              ${
+                element.activeColor
+                  ? `
            const activeElement_${index} = document.querySelector('[data-id="${element.id}"]');
              activeElement_${index}.addEventListener('click', function() {
                if (!this.classList.contains('active')) {
@@ -177,8 +182,8 @@ export const exportProject = (elements, zoomLevel) => {
                  }
              });
              `
-                              : ""
-                          }
+                  : ""
+              }
               ${
                 element.hoverBackgroundColor ||
                 element.hoverBorderColor ||
@@ -303,11 +308,12 @@ export const exportProject = (elements, zoomLevel) => {
     </html>
   `;
 
-  const blob = new Blob([htmlContent], { type: "text/html" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "project.html";
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  // const blob = new Blob([htmlContent], { type: "text/html" });
+  // const link = document.createElement("a");
+  // link.href = URL.createObjectURL(blob);
+  // link.download = "project.html";
+  // document.body.appendChild(link);
+  // link.click();
+  // document.body.removeChild(link);
+  return htmlContent;
 };

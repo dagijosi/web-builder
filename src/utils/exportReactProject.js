@@ -42,7 +42,9 @@ export const exportReactProject = (elements, zoomLevel) => {
       if (element.transition) style.transition = element.transition;
       if (element.overflowX) style.overflowX = element.overflowX;
       if (element.overflowY) style.overflowY = element.overflowY;
-      if (element.shadow) style.boxShadow = element.shadow;
+      if (element.shadowXOffset && element.shadowYOffset && element.shadowBlurRadius && element.shadowSpreadRadius && element.shadowColor) {
+        style.boxShadow = `${element.shadowXOffset}px ${element.shadowYOffset}px ${element.shadowBlurRadius}px ${element.shadowSpreadRadius}px ${element.shadowColor} ${element.shadowInset ? "inset" : ""}`;
+    }
       if (element.flexDirection) style.flexDirection = element.flexDirection;
       if (element.textDecoration) style.textDecoration = element.textDecoration;
       if (element.textTransform) style.textTransform = element.textTransform;
@@ -127,13 +129,14 @@ export const exportReactProject = (elements, zoomLevel) => {
       export default ProjectComponent;
     `;
   
-    const blob = new Blob([reactComponent], { type: "text/jsx" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "ExportReactProject.jsx";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // const blob = new Blob([reactComponent], { type: "text/jsx" });
+    // const link = document.createElement("a");
+    // link.href = URL.createObjectURL(blob);
+    // link.download = "ExportReactProject.jsx";
+    // document.body.appendChild(link);
+    // link.click();
+    // document.body.removeChild(link);
+    return reactComponent;
   };
   
 

@@ -30,6 +30,7 @@ const HierarchyPanel = () => {
     elementId: null,
   });
   const [draggedElement, setDraggedElement] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const toggleExpand = (id) => {
     setExpandedElements((prev) =>
@@ -89,6 +90,21 @@ const HierarchyPanel = () => {
     setDraggedElement(null);
   };
 
+  const filterElements = (elements) => {
+    return elements.filter((element) => {
+      const children = elements.filter((el) => el.parentId === element.id);
+      return (
+        element.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        children.some((child) =>
+          filterElements([child]).length > 0
+        )
+      );
+    });
+  };
+
+  const filteredElements = filterElements(elements);
+  const rootElements = filteredElements.filter((el) => !el.parentId);
+
   const renderElementHierarchy = (element, level = 0) => {
     const children = elements.filter((el) => el.parentId === element.id);
     const isExpanded = expandedElements.includes(element.id);
@@ -96,11 +112,13 @@ const HierarchyPanel = () => {
 
     const canMoveUp = elementIndex > 0;
     const canMoveDown = elementIndex < elements.length - 1;
-    console.log(level);
+
+    const indentLevel = level * 4; // Multiply level by the desired indent size
+
     return (
       <div
         key={element.id}
-        className={``}
+
         onDragOver={(e) => handleDragOver(e, element)}
       >
         <div
@@ -108,11 +126,11 @@ const HierarchyPanel = () => {
           onDragStart={() => handleDragStart(element)}
           onDragEnd={(e) => handleDragStop(e, element)}
           onClick={() => dispatch(selectElement(element.id))}
-          className={`cursor-pointer flex items-center p-3 rounded-lg hover:bg-gray-200 transition-colors duration-200 ${
-            element.id === selectedElementId ? "bg-blue-200" : ""
+          className={`cursor-pointer flex items-center p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200 ${
+            element.id === selectedElementId ? "bg-blue-300" : ""
           } ${
             level === 1
-              ? "ml-4"
+              ? "ml-2"
               : level === 2
               ? "ml-8"
               : level === 3
@@ -128,7 +146,11 @@ const HierarchyPanel = () => {
               : level === 8
               ? "ml-32"
               : ''
-          } `}
+          }`}
+          role="treeitem"
+          aria-expanded={isExpanded}
+          aria-selected={element.id === selectedElementId}
+          tabIndex={0}
         >
           {children.length > 0 && (
             <div
@@ -137,6 +159,7 @@ const HierarchyPanel = () => {
                 toggleExpand(element.id);
               }}
               className="mr-2"
+              aria-hidden="true"
             >
               {isExpanded ? (
                 <FiChevronDown className="text-gray-500" />
@@ -158,6 +181,7 @@ const HierarchyPanel = () => {
               className={`cursor-pointer ${
                 !canMoveUp && "text-gray-400 cursor-not-allowed"
               } transition-colors duration-150`}
+              aria-hidden="true"
             />
             <FiArrowDown
               onClick={(e) => {
@@ -167,6 +191,7 @@ const HierarchyPanel = () => {
               className={`cursor-pointer ${
                 !canMoveDown && "text-gray-400 cursor-not-allowed"
               } transition-colors duration-150`}
+              aria-hidden="true"
             />
             <FiTrash2
               onClick={(e) => {
@@ -174,6 +199,7 @@ const HierarchyPanel = () => {
                 handleDelete(element.id);
               }}
               className="cursor-pointer text-red-500 transition-colors duration-150"
+              aria-hidden="true"
             />
           </div>
         </div>
@@ -183,11 +209,28 @@ const HierarchyPanel = () => {
     );
   };
 
-  const rootElements = elements.filter((el) => !el.parentId);
-
   return (
-    <div className="hierarchy-panel bg-white shadow-lg p-4 w-64 fixed top-0 left-0 h-[630px] overflow-y-auto mt-16 z-50">
-      <h2 className="text-xl font-semibold mb-4">Hierarchy</h2>
+    <div className="hierarchy-panel bg-white shadow-lg rounded-lg p-4 w-64 fixed top-0 left-0 h-[calc(100vh-4rem)] overflow-y-auto mt-16 z-10">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold">Hierarchy</h2>
+        <button
+          className="text-gray-600 hover:text-gray-900 focus:outline-none"
+          aria-label="Toggle Panel"
+          onClick={() => {
+            // Implement collapse/expand functionality
+          }}
+        >
+          {/* Icon for collapsing/expanding the panel */}
+        </button>
+      </div>
+      <input
+        type="text"
+        className="w-full mb-4 p-2 border rounded focus:outline-none focus:border-blue-300"
+        placeholder="Search elements..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        aria-label="Search elements"
+      />
       {rootElements.map((element) => renderElementHierarchy(element))}
       <ConfirmationDialog
         isOpen={confirmationDialog.isOpen}

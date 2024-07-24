@@ -156,11 +156,13 @@ export const exportReactProjectWithStyledComponents = (elements, zoomLevel) => {
     export default ExportedProject;
   `;
 
-  const blob = new Blob([reactComponent], { type: 'text/jsx' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = 'ExportedStyledProject.jsx';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  // const blob = new Blob([reactComponent], { type: 'text/jsx' });
+  // const link = document.createElement('a');
+  // link.href = URL.createObjectURL(blob);
+  // link.download = 'ExportedStyledProject.jsx';
+  // document.body.appendChild(link);
+  // link.click();
+  // document.body.removeChild(link);
+
+  return reactComponent;
 };
