@@ -60,8 +60,8 @@ export const exportProject = (elements, zoomLevel) => {
     ${element.overflowX ? `overflow-x: ${element.overflowX};` : ""}
     ${element.overflowY ? `overflow-y: ${element.overflowY};` : ""}
     ${
-      element.shadow
-        ? `box-shadow: ${element.shadowXoffset}px ${element.shadowYoffset}px ${element.shadowBlur}px ${element.shadowSpread}px ${element.shadowColor};`
+      element.shadowColor
+        ? `box-shadow: ${element.shadowXOffset}px ${element.shadowYOffset}px ${element.shadowBlurRadius}px ${element.shadowSpreadRadius}px ${element.shadowColor};`
         : ""
     }
     ${element.flexDirection ? `flex-direction: ${element.flexDirection};` : ""}

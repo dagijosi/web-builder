@@ -10,6 +10,8 @@ import {
   updateZoomLevel,
   setParentElement,
   addElement,
+  groupElements,
+  ungroupElements,
 } from "../features/elements/elementsSlice";
 import {
   FiZoomIn,
@@ -17,8 +19,9 @@ import {
   FiRotateCcw,
   FiTrash2,
   FiCopy,
+  FiTool,
 } from "react-icons/fi";
-import { FaRegPaste } from "react-icons/fa6";
+import { FaRegPaste, FaEye, FaEyeSlash } from "react-icons/fa6";
 import ConfirmationDialog from "./ConfirmationDialog";
 
 // Utility functions
@@ -55,6 +58,8 @@ const Canvas = () => {
   const [distances, setDistances] = useState([]);
   const gridSize = 1; // Reduced grid size
   const [copiedElement, setCopiedElement] = useState(null);
+  const [isPreviewMode, setIsPreviewMode] = useState(false); // New state for preview mode
+  const [isToolbarVisible, setIsToolbarVisible] = useState(false); // State for toolbar visibility
 
   const handleDragStart = (id) => {
     setDraggingElementId(id);
@@ -66,7 +71,14 @@ const Canvas = () => {
       const y = snapToGrid(d.y, gridSize);
       const element = elements.find((el) => el.id === id);
 
-      const newDistances = calculateDistances(elements, id, x, y, element.width, element.height);
+      const newDistances = calculateDistances(
+        elements,
+        id,
+        x,
+        y,
+        element.width,
+        element.height
+      );
 
       setDistances(newDistances);
     },
@@ -76,12 +88,12 @@ const Canvas = () => {
   const handleDragStop = (id, e, d) => {
     const x = snapToGrid(d.x, gridSize);
     const y = snapToGrid(d.y, gridSize);
-  
+
     // Find the element based on the id
     const element = elements.find((el) => el.id === id);
-  
+
     dispatch(updateElement({ id, properties: { x, y } }));
-  
+
     // Check if the element is within the bounds of another element
     elements.forEach((potentialParent) => {
       if (
@@ -95,7 +107,7 @@ const Canvas = () => {
         dispatch(setParentElement({ childId: id, parentId: null }));
       }
     });
-  
+
     setDraggingElementId(null);
     setDistances([]);
   };
@@ -202,7 +214,13 @@ const Canvas = () => {
           filter: element.filter, // For images and other elements with filters
           overflowX: element.overflowX, // For containers and groups
           overflowY: element.overflowY, // For containers and groups
-          boxShadow: `${element.shadowXOffset || 0}px ${element.shadowYOffset || 0}px ${element.shadowBlurRadius || 0}px ${element.shadowSpreadRadius || 0}px ${element.shadowColor || "rgba(0, 0, 0, 0)"} ${element.shadowInset ? "inset" : ""}`,
+          boxShadow: `${element.shadowXOffset || 0}px ${
+            element.shadowYOffset || 0
+          }px ${element.shadowBlurRadius || 0}px ${
+            element.shadowSpreadRadius || 0
+          }px ${element.shadowColor || "rgba(0, 0, 0, 0)"} ${
+            element.shadowInset ? "inset" : ""
+          }`,
           transition: element.transition, // For buttons and fields
           buttonType: element.buttonType, // For buttons
           // Dynamic properties requiring JS for application
@@ -236,53 +254,83 @@ const Canvas = () => {
     [elements]
   );
 
+  // Toggle preview mode
+  const togglePreviewMode = () => {
+    setIsPreviewMode((prev) => !prev);
+  };
+
+  // Toggle toolbar visibility
+  const toggleToolbarVisibility = () => {
+    setIsToolbarVisible((prev) => !prev);
+  };
+
   return (
-    <div className="canvas bg-gray-100 relative w-full h-full ml-64 mt-16">
-      {/* Zoom Controls */}
-      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-10 flex space-x-2">
+    <div className={`canvas bg-gray-100 relative w-full h-full ml-64 mt-16 ${isPreviewMode ? "fullscreen" : ""}`}>
+      {/* Toggle Button */}
+      <div className="fixed bottom-2 right-4 z-10">
         <button
-          onClick={handleZoomIn}
-          className="btn bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-          title="Zoom In"
+          onClick={toggleToolbarVisibility}
+          className="btn bg-gray-200 text-black p-2 rounded hover:bg-gray-300"
+          title="Toggle Toolbar"
         >
-          <FiZoomIn />
-        </button>
-        <button
-          onClick={handleZoomOut}
-          className="btn bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-          title="Zoom Out"
-        >
-          <FiZoomOut />
-        </button>
-        <button
-          onClick={handleResetZoom}
-          className="btn bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-          title="Reset Zoom"
-        >
-          <FiRotateCcw />
-        </button>
-        <button
-          onClick={handleDelete}
-          className="btn bg-red-500 text-white p-2 rounded hover:bg-red-600"
-          title="Delete Selected Element"
-        >
-          <FiTrash2 />
-        </button>
-        <button
-          onClick={handleCopy}
-          className="btn bg-green-500 text-white p-2 rounded hover:bg-green-600"
-          title="Copy Selected Element"
-        >
-          <FiCopy />
-        </button>
-        <button
-          onClick={handlePaste}
-          className="btn bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600"
-          title="Paste Element"
-        >
-          <FaRegPaste />
+          <FiTool />
         </button>
       </div>
+
+      {/* Toolbar */}
+      {isToolbarVisible && (
+        <div className="fixed bottom-2 right-20 z-10 flex space-x-2 bg-white p-2 rounded shadow-lg">
+          <button
+            onClick={handleZoomIn}
+            className="btn bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+            title="Zoom In"
+          >
+            <FiZoomIn />
+          </button>
+          <button
+            onClick={handleZoomOut}
+            className="btn bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+            title="Zoom Out"
+          >
+            <FiZoomOut />
+          </button>
+          <button
+            onClick={handleResetZoom}
+            className="btn bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+            title="Reset Zoom"
+          >
+            <FiRotateCcw />
+          </button>
+          <button
+            onClick={handleDelete}
+            className="btn bg-red-500 text-white p-2 rounded hover:bg-red-600"
+            title="Delete Selected Element"
+          >
+            <FiTrash2 />
+          </button>
+          <button
+            onClick={handleCopy}
+            className="btn bg-green-500 text-white p-2 rounded hover:bg-green-600"
+            title="Copy Selected Element"
+          >
+            <FiCopy />
+          </button>
+          <button
+            onClick={handlePaste}
+            className="btn bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600"
+            title="Paste Element"
+          >
+            <FaRegPaste />
+          </button>
+          <button
+            onClick={togglePreviewMode}
+            className="btn bg-purple-500 text-white p-2 rounded hover:bg-purple-600"
+            title="Toggle Preview Mode"
+          >
+            {isPreviewMode ? <FaEyeSlash /> : <FaEye />}
+          </button>
+        </div>
+      )}
 
       {/* Canvas Area */}
       <div
@@ -310,12 +358,16 @@ const Canvas = () => {
             onMouseOut={(e) =>
               (e.currentTarget.style.border = "1px solid transparent")
             }
+            disableDragging={isPreviewMode} // Disable dragging in preview mode
+            enableResizing={!isPreviewMode} // Disable resizing in preview mode
           >
             {element.type === "text" && (
               <p style={elementStyles[element.id]}>{element.content}</p>
             )}
             {element.type === "button" && (
-              <button style={elementStyles[element.id]}>{element.content}</button>
+              <button style={elementStyles[element.id]}>
+                {element.content}
+              </button>
             )}
             {element.type === "field" && (
               <input
@@ -340,8 +392,12 @@ const Canvas = () => {
                 style={elementStyles[element.id]}
               />
             )}
-            {element.type === "container" && <div style={elementStyles[element.id]}></div>}
-            {element.type === "group" && <div style={elementStyles[element.id]}></div>}
+            {element.type === "container" && (
+              <div style={elementStyles[element.id]}></div>
+            )}
+            {element.type === "group" && (
+              <div style={elementStyles[element.id]}></div>
+            )}
           </Rnd>
         ))}
 

@@ -8,6 +8,9 @@ import {
   deleteElement,
   setParentElement,
   reorderElements,
+  groupElements,
+  ungroupElements,
+  renameElement,
 } from "../features/elements/elementsSlice";
 import {
   FiChevronDown,
@@ -15,6 +18,8 @@ import {
   FiArrowUp,
   FiArrowDown,
   FiTrash2,
+  FiLayers,
+  FiEdit3,
 } from "react-icons/fi";
 import ConfirmationDialog from "./ConfirmationDialog";
 
@@ -31,6 +36,8 @@ const HierarchyPanel = () => {
   });
   const [draggedElement, setDraggedElement] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [renamingElementId, setRenamingElementId] = useState(null); // New state for renaming
+  const [newName, setNewName] = useState(""); // New state for renaming input
 
   const toggleExpand = (id) => {
     setExpandedElements((prev) =>
@@ -95,11 +102,20 @@ const HierarchyPanel = () => {
       const children = elements.filter((el) => el.parentId === element.id);
       return (
         element.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        children.some((child) =>
-          filterElements([child]).length > 0
-        )
+        children.some((child) => filterElements([child]).length > 0)
       );
     });
+  };
+
+  const handleRename = (id) => {
+    setRenamingElementId(id);
+    const element = elements.find((el) => el.id === id);
+    setNewName(element.content);
+  };
+
+  const handleRenameSubmit = (id) => {
+    dispatch(renameElement({ id, newName }));
+    setRenamingElementId(null);
   };
 
   const filteredElements = filterElements(elements);
@@ -116,11 +132,7 @@ const HierarchyPanel = () => {
     const indentLevel = level * 4; // Multiply level by the desired indent size
 
     return (
-      <div
-        key={element.id}
-
-        onDragOver={(e) => handleDragOver(e, element)}
-      >
+      <div key={element.id} onDragOver={(e) => handleDragOver(e, element)}>
         <div
           draggable
           onDragStart={() => handleDragStart(element)}
@@ -145,7 +157,7 @@ const HierarchyPanel = () => {
               ? "ml-28"
               : level === 8
               ? "ml-32"
-              : ''
+              : ""
           }`}
           role="treeitem"
           aria-expanded={isExpanded}
@@ -169,8 +181,24 @@ const HierarchyPanel = () => {
             </div>
           )}
           <div className="flex-grow truncate">
-            {element.type} -{" "}
-            <span className="text-sm text-gray-600">{element.content}</span>
+            {renamingElementId === element.id ? (
+              <input
+                type="text"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                onBlur={() => handleRenameSubmit(element.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleRenameSubmit(element.id);
+                }}
+                autoFocus
+                className="border-b border-gray-400 focus:outline-none"
+              />
+            ) : (
+              <span>
+                {element.type} -{" "}
+                <span className="text-sm text-gray-600">{element.content}</span>
+              </span>
+            )}
           </div>
           <div className="flex items-center space-x-2">
             <FiArrowUp
@@ -193,12 +221,33 @@ const HierarchyPanel = () => {
               } transition-colors duration-150`}
               aria-hidden="true"
             />
+            <FiEdit3
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRename(element.id);
+              }}
+              className="cursor-pointer text-blue-500 transition-colors duration-150"
+              aria-hidden="true"
+            />
             <FiTrash2
               onClick={(e) => {
                 e.stopPropagation();
                 handleDelete(element.id);
               }}
               className="cursor-pointer text-red-500 transition-colors duration-150"
+              aria-hidden="true"
+            />
+            <FiLayers
+              onClick={(e) => {
+                e.stopPropagation();
+                // Group or ungroup logic based on current state
+                if (element.type === "group") {
+                  dispatch(ungroupElements(element.id));
+                } else {
+                  dispatch(groupElements({ groupId: element.id, elementIds: children.map(child => child.id) }));
+                }
+              }}
+              className="cursor-pointer text-green-500 transition-colors duration-150"
               aria-hidden="true"
             />
           </div>

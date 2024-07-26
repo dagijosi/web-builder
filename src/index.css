@@ -61,3 +61,15 @@ body {
   padding: 8px;
   box-sizing: border-box;
 }
+.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  background-color: white; /* Optional: Add background color to match canvas */
+  margin-left: 0 !important; /* Reset any layout margins */
+  margin-top: 0 !important; /* Reset any layout margins */
+  overflow: scroll;
+}
